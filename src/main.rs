@@ -69,4 +69,16 @@ mod tests {
         assert_eq!(mutant, "Hello and more...");
 
     }
+
+    #[test]
+    fn mutable_borrow() {
+        let mut msg =String::from("hello");
+        // mutable_borrow intended to mut the value 'hello'
+        // need to declare it as a mutable reference
+        let mutable_borrower = &mut msg;
+        mutable_borrower.push_str(" my friend");
+        assert_eq!(mutable_borrower,"hello my friend");
+        assert_eq!(msg, "hello my friend");
+
+    }
 }
