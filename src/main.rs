@@ -79,6 +79,53 @@ mod tests {
         mutable_borrower.push_str(" my friend");
         assert_eq!(mutable_borrower,"hello my friend");
         assert_eq!(msg, "hello my friend");
+    }
 
+    #[test]
+    fn reference_rules() {
+        // the rules of references are 
+        //1. At any time either
+        //   ONE mutable reference ,or  
+        //   ANY number of immutable
+        // This enables one writer, many readers and no contention amongst them
+        //2. References must be valid
+
+        let mut input = String::from("this may be mutated");
+        let reader_1 = &input;
+        let reader_2= &input;
+        let reader_3= reader_1;
+
+        // any number of readers are ok
+        assert_eq!(input.as_str(), reader_1.as_str());
+        assert_eq!(input, *reader_2);
+        assert_eq!(input,*reader_3);
+
+        // since input is mutable, we can define a mutable reference, as long
+        // as there are no readers in scope
+        // the reader are out of scope after the asserts above
+
+        let mutation = String::from(", and so it was");
+        let expected =   input.clone() + mutation.as_str();
+        let changes_value =&mut input;
+        changes_value.push_str(&mutation);
+        assert_eq!(*changes_value, expected);
+
+        // attempting to have a reader(an immutable reference) to input with not 
+        // compile. in the context of this single threaded program the reason it is not obvious 
+        // but if you image async/ multithreaded, then it's clear the this pattern, in general
+        // could cause data races and unprectability results for the reader
+
+        // Error: cannot borrow input as immutable because borrowed as mutable
+        /* 
+        let violates_rule_1_mixing_mut_and_immut = &input;
+        assert_eq!(*changes_value, expected);
+*/
+
+        // similarly multiple writers would lead to unpredictable results in async context
+        // Error: cannot borrow input as mutable more than once at a time
+        /* 
+        let too_many_writers = &mut input;
+        assert_eq!(*changes_value, *too_many_writers);
+        */
     }
 }
