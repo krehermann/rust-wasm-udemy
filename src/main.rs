@@ -128,4 +128,27 @@ mod tests {
         assert_eq!(*changes_value, *too_many_writers);
         */
     }
+
+    #[test]
+    fn string_slice() {
+        let s = String::from("hello");
+        let slc = &s[2..4];
+
+        assert_eq!(slc.len(), 2);
+
+        let inclusive = &s[2..=4];
+        assert_eq!(inclusive.len(), 3);
+
+        // like above, we can move `s` as long as a
+        // borrow is still in scope
+        fn take(v: String) {println!("{}",v)}
+        /* will fail to compile b/c of borrow scoping 
+        take(s);    
+        take(slc.to_string());
+        */
+        // this is ok b/c borrowers are out of scope before moving
+        // the original variable
+        take(slc.to_string());
+        take(s);
+    }
 }
