@@ -151,4 +151,54 @@ mod tests {
         take(slc.to_string());
         take(s);
     }
+
+    #[test]
+    fn structs() {
+        struct Person {
+            first: String,
+            last: String,
+            age: u32
+        }
+
+ 
+        impl Person {
+            fn full_name(&self) -> String{
+               format!("{} {}", self.first, self.last)
+            }
+
+            fn update_age(&mut self, new_age: u32) {
+                self.age = new_age
+            }
+
+            fn new() -> Person {
+                Person { first: "".to_string(), last: "".to_string(), age: 0 }
+            }
+
+            fn from(first: String, last: String, age: u32) -> Person {
+                Person { first: first, last: last, age: age }
+            }
+        }
+
+        let mut p = Person{
+            first:"john".to_string(),
+            last:String::from("doe"),
+            age: 100
+        };
+
+        assert_eq!(p.age, 100);
+     
+        assert_eq!(p.full_name(), "john doe");
+        // p must be declare as mut, of course, to apply this method
+        // it is interesting that the methods are scoped to the declaration
+        // of the instance (mutable vs immutable)
+        p.update_age(100);
+        assert_eq!( p.age, 100);
+
+        let new_born = Person::new();
+        assert_eq!(new_born.age, 0);
+
+        let p2 = Person::from(p.first, p.last, 42);
+       
+        assert_eq!(p2.age, 42);
+    }
 }
