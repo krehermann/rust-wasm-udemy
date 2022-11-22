@@ -152,37 +152,63 @@ mod tests {
         take(s);
     }
 
+    enum PersonalIdentifier {
+        Passport(String),
+        DriverLicense(u32,u32)
+    }
+
+    struct Person {
+        first: String,
+        last: String,
+        age: u32,
+        id: PersonalIdentifier
+    }
+
+
+    impl Person {
+        fn full_name(&self) -> String{
+           format!("{} {}", self.first, self.last)
+        }
+
+        fn update_age(&mut self, new_age: u32) {
+            self.age = new_age
+        }
+
+        fn new() -> Person {
+            Person { 
+                first: "".to_string(), 
+                last: "".to_string(), 
+                age: 0,
+                id: PersonalIdentifier::Passport("P11234".to_string())
+             }
+        }
+
+        fn from(first: String, last: String, age: u32, id: PersonalIdentifier) -> Person {
+            Person { first: first, last: last, age: age, id: id}
+        }
+    }
+
+    fn check_id(id: PersonalIdentifier) {
+        let result = match id {
+            PersonalIdentifier::Passport(x) => {
+                println!("passport id: {}", x);
+                x
+            },
+            PersonalIdentifier::DriverLicense(y, z) => {
+                println!("drivers license: {}.{}", y,z);
+                y
+            }
+        };
+        println!("got result {}", result)
+    }
     #[test]
     fn structs() {
-        struct Person {
-            first: String,
-            last: String,
-            age: u32
-        }
-
- 
-        impl Person {
-            fn full_name(&self) -> String{
-               format!("{} {}", self.first, self.last)
-            }
-
-            fn update_age(&mut self, new_age: u32) {
-                self.age = new_age
-            }
-
-            fn new() -> Person {
-                Person { first: "".to_string(), last: "".to_string(), age: 0 }
-            }
-
-            fn from(first: String, last: String, age: u32) -> Person {
-                Person { first: first, last: last, age: age }
-            }
-        }
 
         let mut p = Person{
             first:"john".to_string(),
             last:String::from("doe"),
-            age: 100
+            age: 100,
+            id: PersonalIdentifier::DriverLicense(21,47)
         };
 
         assert_eq!(p.age, 100);
@@ -197,8 +223,9 @@ mod tests {
         let new_born = Person::new();
         assert_eq!(new_born.age, 0);
 
-        let p2 = Person::from(p.first, p.last, 42);
+        let p2 = Person::from(p.first, p.last, 42,  PersonalIdentifier::DriverLicense(37, 65));
        
         assert_eq!(p2.age, 42);
+        check_id(p2.id)
     }
 }
