@@ -1,0 +1,3 @@
+we need to compile rust to WASM
+WASM can be executed in the browser at nearly native speed
+3d appps, cad, VR, games, system applications
