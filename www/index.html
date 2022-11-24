@@ -19,7 +19,9 @@
 <!-- WASM has 4 types: i32, i64, f32, f64 -->
 
 <!--(module
+    (import "myconsole" "log" (func $log))
     (func $sum (param $a i32) (param $b i32) (result i32)
+        call $log
         local.get $a
         local.get $b
         i32.add
